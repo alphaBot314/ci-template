@@ -1,4 +1,4 @@
-name: test
+name: lint
 
 on:
   push:
@@ -8,14 +8,13 @@ on:
 
 env:
   FOUNDRY_PROFILE: ci
-  TEST_RPC_URL: ${{ secrets.TEST_RPC_URL }}
 
 jobs:
-  test:
+  lint:
     strategy:
       fail-fast: true
 
-    name: Foundry tests
+    name: Foundry project
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,11 +28,10 @@ jobs:
         run: |
           forge --version
 
-      - name: "Generate a fuzz seed that changes weekly to avoid burning through RPC allowance"
-        run: >
-          echo "FOUNDRY_FUZZ_SEED=$(
-            echo $(($EPOCHSECONDS - $EPOCHSECONDS % 604800))
-          )" >> $GITHUB_ENV
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Set yarn cache directory path
         id: yarn-cache-dir-path
@@ -53,17 +51,15 @@ jobs:
       - name: Install node.js dependencies
         run: yarn --frozen-lockfile
 
-      - name: Run Forge build
-        run: |
-          make build
-        id: build
+      - name: Run lint
+        run: yarn lint
 
-      - name: Run Forge tests
+      - name: Run Forge fmt
         run: |
-          make test
-        id: test
+          make format-check
+        id: fmt
 
-      - name: "Add test summary"
+      - name: "Add lint summary"
         run: |
-          echo "## Tests result" >> $GITHUB_STEP_SUMMARY
+          echo "## Lint result" >> $GITHUB_STEP_SUMMARY
           echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
