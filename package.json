@@ -1,0 +1,15 @@
+{
+  "name": "foundry-template",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/alphaBot314/ci-template.git",
+  "author": "alphaBot314 <200007520+alphaBot314@users.noreply.github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "solhint": "^5.1.0"
+  },
+  "scripts": {
+    "lint": "solhint 'src/**/*.sol' 'script/**/*.sol' 'test/**/*.sol'",
+    "lint:fix": "solhint 'src/**/*.sol' 'script/**/*.sol' 'test/**/*.sol' --fix"
+  }
+}
